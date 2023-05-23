@@ -36,7 +36,7 @@ public class Player {
             }
             ficha.played = true;
             ficha.assign = -2;
-            ficha.direction = 0;
+            ficha.direction = 1;
             game.board.add(ficha);
             game.gruping.remove(ficha.image);
             tabs.remove(index);
