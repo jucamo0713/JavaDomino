@@ -59,8 +59,15 @@ public class Player {
                 }else{
                     x.image.setBorder(null);
                     x.allowed = false;
+                    x.image.setText(null);
                 }
             }
+            for(Ficha x : game.board){
+                x.image.setBorder(null);
+                x.allowed = false;
+                x.image.setText(null);
+            }
+
             if (count > 0) {
                 game.cleanCanPlay();
                 new JOptionPane("ES TU TURNO").createDialog("MESSAGE").setVisible(true);
