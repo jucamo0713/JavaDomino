@@ -28,6 +28,7 @@ public Home() {
     this.setLocationRelativeTo(null);
     this.setVisible(true);
     this.setDefaultCloseOperation(3);
+    this.setTitle("El domino de julian moreno");
     frame = this;
 }
 }
