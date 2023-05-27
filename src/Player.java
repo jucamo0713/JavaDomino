@@ -49,12 +49,19 @@ public class Player {
             finishGame();
             nextPlayer.manageTurn();
         } else if (real) {
-            ArrayList<Ficha> disponibles = new ArrayList<>(tabs.stream().filter(x -> x.values[0] == game.allowedNumbers[0] || x.values[0] == game.allowedNumbers[1] || x.values[1] == game.allowedNumbers[0] || x.values[1] == game.allowedNumbers[1]).toList());
-            if (disponibles.size() > 0) {
-                disponibles.forEach(x -> {
+            int count = 0;
+            game.repaint();
+            for(Ficha x : tabs){
+                if(x.values[0] == game.allowedNumbers[0] || x.values[0] == game.allowedNumbers[1] || x.values[1] == game.allowedNumbers[0] || x.values[1] == game.allowedNumbers[1]){
                     x.image.setBorder(new BasicBorders.ButtonBorder(Color.green, Color.green, Color.green, Color.green));
                     x.allowed = true;
-                });
+                    count++;
+                }else{
+                    x.image.setBorder(null);
+                    x.allowed = false;
+                }
+            }
+            if (count > 0) {
                 game.cleanCanPlay();
                 new JOptionPane("ES TU TURNO").createDialog("MESSAGE").setVisible(true);
             } else {
@@ -62,6 +69,7 @@ public class Player {
                 turno = false;
                 nextPlayer.turno = true;
                 finishGame();
+                new JOptionPane("Se pasa tu turno, no tienes movimientos disponibles").createDialog("MESSAGE").setVisible(true);
                 nextPlayer.manageTurn();
             }
         } else {
@@ -99,8 +107,9 @@ public class Player {
                             tabs.remove(ficha);
                             game.repaint();
                         }
-                        suma -= (ficha.values[0] + ficha.values[0]);
+                        suma -= (ficha.values[0] + ficha.values[1]);
                     }
+                    new JOptionPane("Se juegan las 2 fichas marranas de "+ marranas.get(0).values[0] + " y "+marranas.get(1).values[1]+", le quedan "+tabs.size()+" fichas a este jugador").createDialog("MESSAGE").setVisible(true);
                     turno = false;
                     nextPlayer.turno = true;
                     finishGame();
@@ -141,10 +150,11 @@ public class Player {
                         tabs.remove(ficha);
                         game.repaint();
                     }
-                    suma -= (ficha.values[0] + ficha.values[0]);
+                    suma -= (ficha.values[0] + ficha.values[1]);
                     game.cleanCanPlay();
                     turno = false;
                     nextPlayer.turno = true;
+                    new JOptionPane("Se juega la ficha "+ ficha.values[0] + " / "+ficha.values[1]+", le quedan "+tabs.size()+" fichas a este jugador").createDialog("MESSAGE").setVisible(true);
                     finishGame();
                     nextPlayer.manageTurn();
                 }
@@ -152,6 +162,7 @@ public class Player {
                 canPlay = false;
                 turno = false;
                 nextPlayer.turno = true;
+                new JOptionPane("Se pasa un turno , le quedan "+tabs.size()+" fichas a este jugador").createDialog("MESSAGE").setVisible(true);
                 finishGame();
                 nextPlayer.manageTurn();
             }
@@ -164,9 +175,11 @@ public class Player {
 
     public void generate() {
         if (turno && (selecteds.size() == 2)) {
+            // seleccion de 2 marranas
             for (Ficha ficha : selecteds) {
                 ficha.played = true;
                 if (game.allowedNumbers[1] == ficha.values[0] || game.allowedNumbers[1] == ficha.values[1]) {
+                    //ficha por la derecha
                     if (game.board.get(game.board.size() - 1).assign == -2) {
                         game.board.get(game.board.size() - 1).assign = 1;
                     } else {
@@ -181,6 +194,7 @@ public class Player {
                     tabs.remove(ficha);
                     game.repaint();
                 } else {
+                    //ficha por la izquierda
                     if (game.board.get(0).assign == -2) {
                         game.board.get(0).assign = 0;
                     } else {
@@ -195,22 +209,19 @@ public class Player {
                     tabs.remove(ficha);
                     game.repaint();
                 }
-                suma -= (ficha.values[0] + ficha.values[0]);
+                suma -= (ficha.values[0] + ficha.values[1]);
                 ficha.selected = false;
                 ficha.image.setText(null);
                 ficha.image.setBorder(null);
             }
-            tabs.forEach(x -> {
-                x.allowed = false;
-                x.image.setBorder(null);
-            });
             turno = false;
             nextPlayer.turno = true;
             finishGame();
-            nextPlayer.manageTurn();
             selecteds = new ArrayList<>();
             side = -1;
+            nextPlayer.manageTurn();
         } else if (turno && selecteds.size() > 0 && side != -1) {
+            //fichas selecionadas validas
             Ficha ficha = selecteds.get(0);
             ficha.played = true;
             if (side == 3) {
@@ -247,7 +258,7 @@ public class Player {
                     tabs.remove(ficha);
                     game.repaint();
                 }
-                suma -= (ficha.values[0] + ficha.values[0]);
+                suma -= (ficha.values[0] + ficha.values[1]);
                 ficha.selected = false;
                 ficha.image.setBorder(null);
                 ficha.image.setText(null);
@@ -293,6 +304,7 @@ public class Player {
                         x.image.setBorder(null);
                     });
                     game.repaint();
+                    suma -= (ficha.values[0] + ficha.values[1]);
                     turno = false;
                     ficha.selected = false;
                     ficha.image.setBorder(null);
@@ -310,15 +322,15 @@ public class Player {
     }
 
     void finishGame() {
+        Player ganador = null;
         if (tabs.size() == 0) {
-            new FinishMessage(resolveMessage(real)).setVisible(true);
+            ganador= this;
         } else if (Arrays.stream(game.players).noneMatch(x -> x.canPlay)) {
-            new FinishMessage(resolveMessage(Arrays.stream(game.players).sorted(Comparator.comparingInt(x -> x.suma)).toList().get(0).real)).setVisible(true);
+            ganador =Arrays.stream(game.players).sorted(Comparator.comparingInt(x -> x.suma)).toList().get(0);
         }
-    }
-
-    String resolveMessage(boolean realWinner) {
-        return realWinner ? "FELICIDADES GANASTE" : "PERDISTE SUERTE PARA LA PROXIMA";
+        if(ganador != null){
+            new FinishMessage(ganador).setVisible(true);
+        }
     }
 }
 

@@ -14,7 +14,7 @@ public class Domino extends JFrame {
     public Player turnPlayer;
 
     public Player realPlayer;
-    private static Ficha[] allTabs = new Ficha[28];
+    private static ArrayList<Ficha> tabsNotAssigned = new ArrayList<>();
     public ArrayList<Ficha> board = new ArrayList<Ficha>(){
         @Override
         public boolean add(Ficha element) {
@@ -26,6 +26,7 @@ public class Domino extends JFrame {
         @Override
         public void add(int index, Ficha element) {;
             BoardPanel.add(element.evaluate(), index);
+            BoardPanel.updateUI();
             BoardPanel.repaint();
             super.add(index, element);
         }
@@ -33,17 +34,16 @@ public class Domino extends JFrame {
 
     public int[] allowedNumbers = new int[2];
     static {
-        int count = 0;
         for (int i = 0; i <= 6; i++) {
             for (int j = i; j <= 6; j++) {
-                allTabs[count] = new Ficha(i, j);
+                Ficha f = new Ficha(i, j);
+                tabsNotAssigned.add(f);
                 if (i == j) {
-                    allTabs[count].marrana = true;
-                    allTabs[count].priority = 10000 + i;
+                    f.marrana = true;
+                    f.priority = 10000 + i;
                 } else {
-                    allTabs[count].priority = i + j;
+                    f.priority = i + j;
                 }
-                count++;
             }
         }
     }
@@ -62,7 +62,7 @@ public class Domino extends JFrame {
         for (int i = 0; i < tabsByPlayers * players; i++) {
             Ficha ficha;
             do {
-                ficha = allTabs[(int) (Math.random() * 28)];
+                ficha = tabsNotAssigned.remove((int) (Math.random() *tabsNotAssigned.size()));
             } while (ficha.assigned);
             ficha.assigned = true;
             ficha.game = this;
