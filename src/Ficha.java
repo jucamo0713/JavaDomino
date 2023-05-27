@@ -3,12 +3,12 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.nio.file.Path;
 
 public class Ficha {
     private Ficha ficha;
     public JPanel main;
     public JLabel image;
-
     public boolean assigned = false;
     public boolean played = false;
 
@@ -20,13 +20,12 @@ public class Ficha {
     public Domino game;
     public boolean selected;
     public boolean allowed = false;
-
     public int direction = -1;
+
     public Ficha(int first, int second) {
         values[0] = first;
         values[1] = second;
-        file = new File("." + File.separator + "src" + File.separator + "assets" + File.separator + "fichas" + File.separator + values[0] + values[1] + ".png");
-        ImageIcon i = new ImageIcon("." + File.separator + "src" + File.separator + "assets" + File.separator + "fichas" + File.separator + values[0] + values[1] + ".png");
+        ImageIcon i = new ImageIcon(Path.of(".", "src", "assets", "fichas", "" + values[0] + "" + values[1] + ".png").toString());
         image.setIcon(i);
         image.setForeground(Color.red);
         this.ficha = this;
@@ -44,13 +43,13 @@ public class Ficha {
                                 image.setText("SELECTED");
                             }
                         }
-                    }else if (played && assign != -1){
+                    } else if (played && assign != -1) {
                         if (selected) {
-                            game.turnPlayer.side= -1;
+                            game.turnPlayer.side = -1;
                             image.setText(null);
                         } else {
-                            if (game.turnPlayer.side==-1) {
-                                game.turnPlayer.side = Math.abs(assign-1);
+                            if (game.turnPlayer.side == -1) {
+                                game.turnPlayer.side = Math.abs(assign - 1);
                                 image.setText("selected");
                             }
                         }
@@ -64,7 +63,7 @@ public class Ficha {
 
     public JLabel evaluate() {
         if (!marrana) {
-            image.setIcon(new ImageIcon("." + File.separator + "src" + File.separator + "assets" + File.separator + "fichas" + File.separator + values[0] + values[1] + direction+".png"));
+            image.setIcon(new ImageIcon(Path.of(".", "src", "assets", "fichas", "" + values[0] + values[1] + direction + ".png").toString()));
         }
         return image;
     }
