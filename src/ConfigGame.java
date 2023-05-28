@@ -9,7 +9,7 @@ public class ConfigGame extends JFrame {
     private int minNumbersOfTabsBlocked = 0;
     private int maxNumbersOfTabsBlocked = 26;
     private final int minNumbersOfPlayers = 2;
-    private final int maxNumbersOfPlayers = 26;
+    private final int maxNumbersOfPlayers = 28;
 
     private static ConfigGame frame;
     private JPanel main;
@@ -21,8 +21,6 @@ public class ConfigGame extends JFrame {
     private JTextField TabsBlocked;
 
     public ConfigGame() {
-
-
         this.add(main);
         this.pack();
         this.setLocationRelativeTo(null);
@@ -45,9 +43,30 @@ public class ConfigGame extends JFrame {
                     return;
                 }
                 if (numberOfPlayers < minNumbersOfPlayers) {
-                    numberOfPlayers = minNumbersOfPlayers;
-                } else if (numberOfPlayers > maxNumbersOfPlayers) {
+                    return;
+                }
+                if (numberOfPlayers > maxNumbersOfPlayers) {
                     numberOfPlayers = maxNumbersOfPlayers;
+                }
+                setNumberOfPlayers(numberOfPlayers);
+            }
+        });
+        PlayerNumbers.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String value = PlayerNumbers.getText();
+                int numberOfPlayers = frame.numberOfPlayers;
+                if (value.isEmpty()) {
+                    value= "0";
+                }
+                try {
+                    numberOfPlayers = Integer.parseInt(value);
+                } catch (Exception error) {
+                    PlayerNumbers.setText("" + numberOfPlayers);
+                    return;
+                }
+                if (numberOfPlayers < minNumbersOfPlayers) {
+                    numberOfPlayers = minNumbersOfPlayers;
                 }
                 setNumberOfPlayers(numberOfPlayers);
             }
@@ -82,7 +101,7 @@ public class ConfigGame extends JFrame {
                 String value = TabsBlocked.getText();
                 int tabsBlocked = frame.tabsBlocked;
                 if (value.isEmpty()) {
-                    return;
+                    value = "0";
                 }
                 try {
                     tabsBlocked = Integer.parseInt(value);
@@ -91,7 +110,7 @@ public class ConfigGame extends JFrame {
                     return;
                 }
                 if ((28 - tabsBlocked) % numberOfPlayers != 0) {
-                    tabsBlocked = -(Math.round((float)(28 - tabsBlocked) / numberOfPlayers) * numberOfPlayers - 28);
+                    tabsBlocked = -(Math.round((float) (28 - tabsBlocked) / numberOfPlayers) * numberOfPlayers - 28);
                     setTabsBlocked(tabsBlocked);
                 }
             }

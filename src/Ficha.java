@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.nio.file.Path;
 
 public class Ficha {
     private Ficha ficha;
@@ -15,7 +13,6 @@ public class Ficha {
     public int values[] = new int[2];
     public int assign = -1;
     public boolean marrana = false;
-    public File file = null;
     public int priority = -1;
     public Domino game;
     public boolean selected;
@@ -25,8 +22,7 @@ public class Ficha {
     public Ficha(int first, int second) {
         values[0] = first;
         values[1] = second;
-        //ImageIcon i = new ImageIcon(Path.of(System.getProperty("user.dir"), "src", "assets", "fichas", "" + values[0] + "" + values[1] + ".png").toString());
-        ImageIcon i = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(("assets/fichas/" + values[0] + values[1]  + ".png").toString()));
+        ImageIcon i = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(("assets/fichas/" + values[0] + values[1] + ".png").toString()));
         image.setIcon(i);
         image.setForeground(Color.red);
         this.ficha = this;
@@ -44,18 +40,17 @@ public class Ficha {
                                 image.setText("SELECTED");
                             }
                         }
+                        selected = !selected;
                     } else if (played && assign != -1) {
                         if (selected) {
                             game.turnPlayer.side = -1;
                             image.setText(null);
-                        } else {
-                            if (game.turnPlayer.side == -1) {
-                                game.turnPlayer.side = Math.abs(assign - 1);
-                                image.setText("selected");
-                            }
+                        } else if (game.turnPlayer.side == -1) {
+                            game.turnPlayer.side = Math.abs(assign - 1);
+                            image.setText("selected");
                         }
+                        selected = !selected;
                     }
-                    selected = !selected;
                     game.turnPlayer.generate();
                 }
             }
@@ -64,7 +59,6 @@ public class Ficha {
 
     public JLabel evaluate() {
         if (!marrana) {
-            //image.setIcon(new ImageIcon(Path.of(System.getProperty("user.dir"), "src", "assets", "fichas", "" + values[0] + values[1] + direction + ".png").toString()));
             image.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(("assets/fichas/" + values[0] + values[1] + direction + ".png").toString())));
         }
         return image;

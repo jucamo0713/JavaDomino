@@ -11,8 +11,9 @@ public class FinishMessage extends JDialog {
 
     public FinishMessage(Player ganador) {
         setContentPane(contentPane);
-        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setModal(true);
+
         message.setText(ganador.real ? "FELICIDADES GANASTE" : "PERDISTE SUERTE PARA LA PROXIMA");
         tabsSize.setText(""+ganador.tabs.size());
         suma.setText(""+ganador.suma);

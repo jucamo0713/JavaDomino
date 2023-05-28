@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Domino extends JFrame {
     static Domino frame;
@@ -15,20 +16,21 @@ public class Domino extends JFrame {
 
     public Player realPlayer;
     private static ArrayList<Ficha> tabsNotAssigned = new ArrayList<>();
-    public ArrayList<Ficha> board = new ArrayList<Ficha>(){
+    public LinkedList<Ficha> board = new LinkedList<Ficha>(){
         @Override
-        public boolean add(Ficha element) {
+        public void addLast(Ficha element) {
             BoardPanel.add(element.evaluate());
+            BoardPanel.updateUI();
             BoardPanel.repaint();
-            return super.add(element);
+            super.addLast(element);
         }
 
         @Override
-        public void add(int index, Ficha element) {;
-            BoardPanel.add(element.evaluate(), index);
+        public void addFirst(Ficha element) {;
+            BoardPanel.add(element.evaluate(),0);
             BoardPanel.updateUI();
             BoardPanel.repaint();
-            super.add(index, element);
+            super.addFirst(element);
         }
     };
 
@@ -60,10 +62,7 @@ public class Domino extends JFrame {
         realPlayer = this.players[realIndex];
         int maxPriotiy = -1;
         for (int i = 0; i < tabsByPlayers * players; i++) {
-            Ficha ficha;
-            do {
-                ficha = tabsNotAssigned.remove((int) (Math.random() *tabsNotAssigned.size()));
-            } while (ficha.assigned);
+            Ficha ficha = tabsNotAssigned.remove((int) (Math.random() *tabsNotAssigned.size()));
             ficha.assigned = true;
             ficha.game = this;
             this.players[i % players].tabs.add(ficha);
